@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberFocus V4 - Full Control</title>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --card-bg: #111111;
+            --neon-purple: #9d00ff;
+            --neon-cyan: #00f2ff;
+            --neon-pink: #ff007a;
+            --text: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        /* CONFIGURAÇÃO DE TEMPO */
+        .setup-section {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .time-presets {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .custom-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-input-group input {
+            width: 70px;
+            background: #000;
+            border: 1px solid var(--neon-purple);
+            color: var(--neon-cyan);
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .preset-btn {
+            background: var(--glass);
+            border: 1px solid var(--neon-purple);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: var(--neon-purple);
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        /* DISPLAY */
+        #timer-display {
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px var(--neon-purple);
+            margin: 10px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* CONTROLES */
+        .main-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .btn-start { background: var(--neon-cyan); color: #000; }
+        .btn-pause { background: #333; color: #fff; }
+        .btn-stop-alarm { 
+            background: var(--neon-pink); 
+            color: #fff; 
+            display: none;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0px var(--neon-pink); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px var(--neon-pink); }
+            100% { transform: scale(1); box-shadow: 0 0 0px var(--neon-pink); }
+        }
+
+        /* QUEST LOG */
+        .quest-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: #000;
+            border: 1px solid #333;
+            padding: 12px;
+            color: #fff;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .quest-item {
+            background: rgba(255,255,255,0.03);
+            border-left: 4px solid var(--neon-cyan);
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 10px 10px 0;
+            text-align: left;
+        }
+
+        .done { opacity: 0.4; text-decoration: line-through; border-left-color: #444; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="glass-card">
+            <h1>Protocolo de Tempo</h1>
+            
+            <div class="setup-section">
+                <div class="time-presets">
+                    <button class="preset-btn" onclick="setTime(25)">Foco (25m)</button>
+                    <button class="preset-btn" onclick="setTime(50)">Deep (50m)</button>
+                    <button class="preset-btn" onclick="setTime(5)">Pausa (5m)</button>
+                </div>
+                
+                <div class="custom-input-group">
+                    <input type="number" id="custom-min" placeholder="Min" min="1" max="999">
+                    <button class="preset-btn" onclick="setCustomTime()">Definir Missão</button>
+                </div>
+            </div>
+
+            <div id="timer-display">25:00</div>
+
+            <div class="main-controls">
+                <button id="btn-start" class="btn-action btn-start" onclick="startTimer()">Iniciar</button>
+                <button id="btn-pause" class="btn-action btn-pause" onclick="pauseTimer()">Pausar</button>
+                <button id="btn-stop-alarm" class="btn-action btn-stop-alarm" onclick="stopAlarm()">Encerrar Alarme</button>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h2>Quest Log</h2>
+            <div class="quest-input-group">
+                <input type="text" id="quest-input" placeholder="Qual o seu objetivo?">
+                <button class="preset-btn" style="padding: 12px 20px" onclick="addQuest()">+</button>
+            </div>
+            <div id="quest-list"></div>
+        </div>
+    </div>
+
+    <audio id="alarm-sound" loop preload="auto">
+        <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
+    </audio>
+
+    <script>
+        let timeLeft = 25 * 60;
+        let timerId = null;
+        let audioUnlocked = false; // Trava de segurança para navegadores mobile
+        
+        const display = document.getElementById('timer-display');
+        const alarm = document.getElementById('alarm-sound');
+        const btnStopAlarm = document.getElementById('btn-stop-alarm');
+        const btnStart = document.getElementById('btn-start');
+        const btnPause = document.getElementById('btn-pause');
+
+        function updateDisplay() {
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            display.textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        // Funções para definir o tempo
+        function setTime(min) {
+            stopAlarm();
+            pauseTimer();
+            timeLeft = min * 60;
+            updateDisplay();
+        }
+
+        function setCustomTime() {
+            const input = document.getElementById('custom-min');
+            const val = parseInt(input.value);
+            if (val > 0) {
+                setTime(val);
+                input.value = "";
+            } else {
+                alert("Insira um tempo válido (minutos).");
+            }
+        }
+
+        // Lógica do Cronômetro
+        function startTimer() {
+            // "Desbloqueia" o som no primeiro clique do usuário para driblar o bloqueio do celular
+            if (!audioUnlocked) {
+                alarm.volume = 0; // Toca mudo primeiro
+                alarm.play().then(() => {
+                    alarm.pause(); 
+                    alarm.currentTime = 0;
+                    alarm.volume = 1; // Restaura o volume
+                    audioUnlocked = true;
+                }).catch(e => console.log("Aguardando interação do usuário"));
+            }
+
+            if (timerId) return;
+            timerId = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateDisplay();
+                } else {
+                    finishSession();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerId);
+            timerId = null;
+        }
+
+        function finishSession() {
+            pauseTimer();
+            
+            // Toca o alarme
+            alarm.muted = false;
+            const playPromise = alarm.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => console.log("Erro ao tocar som: ", error));
+            }
+
+            // Ativa a vibração (se o celular suportar)
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 200, 500, 200, 500]);
+            }
+
+            btnStopAlarm.style.display = "block";
+            btnStart.style.display = "none";
+            btnPause.style.display = "none";
+            
+            display.style.color = "var(--neon-pink)";
+            display.style.textShadow = "0 0 30px var(--neon-pink)";
+            
+            // Pequeno atraso no alerta para o som poder começar a tocar
+            setTimeout(() => alert("Missão Concluída! Hora do intervalo."), 100);
+        }
+
+        function stopAlarm() {
+            alarm.pause();
+            alarm.currentTime = 0;
+            btnStopAlarm.style.display = "none";
+            btnStart.style.display = "block";
+            btnPause.style.display = "block";
+            display.style.color = "#fff";
+            display.style.textShadow = "0 0 20px var(--neon-purple)";
+        }
+
+        // Sistema de Quests
+        function addQuest() {
+            const input = document.getElementById('quest-input');
+            if (!input.value.trim()) return;
+            const list = document.getElementById('quest-list');
+            const div = document.createElement('div');
+            div.className = 'quest-item';
+            div.innerHTML = `
+                <span style="flex:1; cursor:pointer" onclick="this.parentElement.classList.toggle('done')">${input.value}</span>
+                <button class="preset-btn" style="border-color: #ff4444; color: #ff4444;" onclick="this.parentElement.remove()">X</button>
+            `;
+            list.appendChild(div);
+            input.value = "";
+        }
+
+        // Listener para o Enter na Quest
+        document.getElementById('quest-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addQuest();
+        });
+    </script>
+</body>
+</html>
